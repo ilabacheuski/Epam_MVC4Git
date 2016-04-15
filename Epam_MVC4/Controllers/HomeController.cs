@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using CsvHelper;
 using PagedList;
 using PagedList.Mvc;
-using Epam_MVC4.DAL;
 using Epam_MVC4.Controllers;
 using Newtonsoft.Json;
 using System.Xml.Serialization;

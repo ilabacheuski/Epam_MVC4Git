@@ -8,7 +8,7 @@ namespace Epam_MVC4
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
+            
         }
     }
 }
