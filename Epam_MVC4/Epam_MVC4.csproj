@@ -227,7 +227,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\DataProvider.cs" />
+    <Compile Include="Controllers\DataProvider.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Models\_DataRecordModel.cs" />

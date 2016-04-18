@@ -95,8 +95,17 @@ namespace Epam_MVC4.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetQuotes(string Query, string Provider, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20)
+        public ActionResult GetQuotes(string Query, 
+            //[Bind(Include ="Id")]
+            string ProviderName, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20)
         {
+            //string Query, string ProviderName, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20
+            //string Query = hvm.Query;
+            //int ProviderName = hvm.SelectedProviderId;
+            //DateTime StartDate = hvm.StartDate;
+            //DateTime EndDate = hvm.EndDate;
+            //PerPage PerPage = PerPage._20;
+
             if (String.IsNullOrWhiteSpace(Query))
             {
                 ModelState.AddModelError("Query", "Please input a querry!");
@@ -116,15 +125,16 @@ namespace Epam_MVC4.Controllers
                 return PartialView("_Error");
             }
 
+            var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
             hvm.StartDate = StartDate;
             hvm.EndDate = EndDate;
             hvm.PerPage = PerPage;
             hvm.page = 1;
-            hvm.Provider = GetDataProvider(Provider);
+            //hvm.ProviderName = provider;
 
             if (Request.IsAjaxRequest())
             {
-                IEnumerable<DataRecord> data = GetData(Query, Provider, StartDate, EndDate);             
+                IEnumerable<DataRecord> data = provider.GetData(Query, StartDate, EndDate);
 
                 if (data == null)
                 {
@@ -158,42 +168,42 @@ namespace Epam_MVC4.Controllers
             return repository;
         }
 
-        private DataProvider GetDataProvider(string Name)
-        {
-            return hvm.DataProviders.First(x => x.Name == Name);
-        }
+        //private DataProvider GetDataProvider(string Name)
+        //{
+        //    return hvm.DataProviders.First(x => x.Name == Name);
+        //}
 
-        private string GetCSV(string url)
-        {
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+        //private string GetCSV(string url)
+        //{
+        //    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+        //    HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
 
-            StreamReader sr = new StreamReader(resp.GetResponseStream());
-            string results = sr.ReadToEnd();
-            sr.Close();
+        //    StreamReader sr = new StreamReader(resp.GetResponseStream());
+        //    string results = sr.ReadToEnd();
+        //    sr.Close();
 
-            return results;
-        }
+        //    return results;
+        //}
 
-        private IEnumerable<DataRecord> GetData(string Quote, string Provider, DateTime StartDate, DateTime EndDate)
-        {
-            DataProvider provider = GetDataProvider(Provider);
-            string doc;
-            try
-            {
-                doc = GetCSV(provider.GetUrl() + provider.GetPost(Quote, StartDate, EndDate));
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+        //private IEnumerable<DataRecord> GetData(string Quote, string ProviderName, DateTime StartDate, DateTime EndDate)
+        //{
+        //    DataProvider provider = GetDataProvider(ProviderName);
+        //    string doc;
+        //    try
+        //    {
+        //        doc = GetCSV(provider.GetUrl() + provider.GetPost(Quote, StartDate, EndDate));
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return null;
+        //    }
 
-            if (String.IsNullOrEmpty(doc)) return null;
+        //    if (String.IsNullOrEmpty(doc)) return null;
 
-            IEnumerable<DataRecord> result = provider.GetDataFromCSV(doc);
+        //    IEnumerable<DataRecord> result = provider.GetDataFromCSV(doc);
 
-            return result;
-        }
+        //    return result;
+        //}
 
     }
 }

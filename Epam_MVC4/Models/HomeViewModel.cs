@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace Epam_MVC4.Models
 {
@@ -24,7 +25,14 @@ namespace Epam_MVC4.Models
 
         public IEnumerable<DataProvider> DataProviders { get; }
 
-        public DataProvider Provider;
+        //public IEnumerable<SelectListItem> SelectListProviders { get; set; }
+
+        //public SelectList SelectListProvider { get; set; }
+
+        public string ProviderName { get; set; }
+
+        public int SelectedProviderId { get; set; }
+        public DataProvider SelectedProvider { get; set; }
 
         public IEnumerable<DataRecord> Table { get; set; }
 
@@ -32,16 +40,17 @@ namespace Epam_MVC4.Models
 
         public HomeViewModel()
         {
-            DataProvider google = new Google();
-            DataProvider yahoo = new Yahoo();
-
-            DataProviders = new List<DataProvider>() { google, yahoo };
-
-            Provider = DataProviders.FirstOrDefault();
+            DataProviders = new DataProviders().GetProviders();
+            SelectedProvider = DataProviders.FirstOrDefault();
+            //ProviderName = DataProviders.FirstOrDefault().Name.ToString();
             StartDate = DateTime.Today.AddMonths(-12);
             EndDate = DateTime.Today;
             PerPage = PerPage._20;
             page = 1;
+
+            //SelectListProvider = new SelectList(new DataProviders().GetProviders(), "Id", "Name");
+
+            //SelectListProviders = from item in new DataProviders().GetProviders() select new SelectListItem { Text = item.Name, Value = item.Id.ToString()};
         }
     }
 

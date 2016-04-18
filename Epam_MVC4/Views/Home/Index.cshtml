@@ -17,15 +17,18 @@
     <div class="form-group form-inline form-group-sm">
         <div class="col-xs-3">
             <label for="Provider">Get from:</label>
-            @Html.DropDownList("Provider", new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
+            @*@Html.DropDownList("Provider", new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
+                    new { @class = "form-control col-md-2", onchange = "ChangeProviderId()" })*@
+            @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
                     new { @class = "form-control col-md-2" })
+            @Html.HiddenFor(x => Model.SelectedProvider, new { onclick = ""})
+            @*@Html.DropDownListFor(x => Model.Provider, Model.SelectListProvider,
+                    new { @class = "form-control" })*@
         </div>
         <div class="col-xs-7">
             <label for="DateGroup">Date range: </label><br/>
-            @*<div id="DateGroup" name="DateGroup" class="form-inline">*@
             @Html.EditorFor(x => Model.StartDate, new { htmlAttributes = new { @class = "form-control" } }) <span><b>  -  </b></span>
             @Html.EditorFor(x => Model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-            @*</div>*@
         </div>
         <div class="col-xs-1">
             <label for="PerPage">Size:</label>
@@ -43,3 +46,4 @@
 <div id="data-table" class="container">
     @Html.Partial("_Table", Model.Table)
 </div>
+
