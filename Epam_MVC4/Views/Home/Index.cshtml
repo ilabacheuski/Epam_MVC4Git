@@ -21,7 +21,7 @@
                     new { @class = "form-control col-md-2", onchange = "ChangeProviderId()" })*@
             @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
                     new { @class = "form-control col-md-2" })
-            @Html.HiddenFor(x => Model.SelectedProvider, new { onclick = ""})
+            @*@Html.HiddenFor(x => Model.SelectedProvider, new { onclick = ""})*@
             @*@Html.DropDownListFor(x => Model.Provider, Model.SelectListProvider,
                     new { @class = "form-control" })*@
         </div>

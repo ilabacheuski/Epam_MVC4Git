@@ -5,6 +5,7 @@ using System.Web;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using Epam_MVC4.Controllers;
 
 namespace Epam_MVC4.Models
 {
@@ -31,22 +32,26 @@ namespace Epam_MVC4.Models
 
         public string ProviderName { get; set; }
 
-        public int SelectedProviderId { get; set; }
-        public DataProvider SelectedProvider { get; set; }
+        //public int SelectedProviderId { get; set; }
+        //public DataProvider SelectedProvider { get; set; }
 
         public IEnumerable<DataRecord> Table { get; set; }
 
         public string Query;
 
+        //public IEnumerable<string> ExportFormatList { get; set; }
+
         public HomeViewModel()
         {
             DataProviders = new DataProviders().GetProviders();
-            SelectedProvider = DataProviders.FirstOrDefault();
+            //SelectedProvider = DataProviders.FirstOrDefault();
             //ProviderName = DataProviders.FirstOrDefault().Name.ToString();
             StartDate = DateTime.Today.AddMonths(-12);
             EndDate = DateTime.Today;
             PerPage = PerPage._20;
             page = 1;
+
+            //ExportFormatList = new Export().GetFormats();
 
             //SelectListProvider = new SelectList(new DataProviders().GetProviders(), "Id", "Name");
 
