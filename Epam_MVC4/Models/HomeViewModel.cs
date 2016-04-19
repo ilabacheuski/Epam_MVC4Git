@@ -39,6 +39,9 @@ namespace Epam_MVC4.Models
 
         public string Query;
 
+        public virtual int ProviderId { get; set; }
+        //public virtual SelectList ProviderList { get; set; }
+
         //public IEnumerable<string> ExportFormatList { get; set; }
 
         public HomeViewModel()
@@ -50,6 +53,8 @@ namespace Epam_MVC4.Models
             EndDate = DateTime.Today;
             PerPage = PerPage._20;
             page = 1;
+
+            //ProviderList = new SelectList(DataProviders, "Id", "Name");
 
             //ExportFormatList = new Export().GetFormats();
 

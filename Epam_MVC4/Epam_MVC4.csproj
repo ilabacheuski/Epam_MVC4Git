@@ -231,6 +231,7 @@
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Models\_DataRecordModel.cs" />
+    <Compile Include="Models\_TableViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

@@ -69,27 +69,27 @@ namespace Epam_MVC4.Controllers
 
             if (Request.IsAjaxRequest())
             {
-                return PartialView("_Table", hvm.Table);                
+                _TableViewModel tModel = new _TableViewModel();
+                tModel.Data = new List<DataRecord>();
+                return PartialView("_Table", tModel);                
             }
+
+            ViewBag.ProviderId = new SelectList(hvm.DataProviders, "Id", "Name");
 
             return View("Index", hvm);
         }
 
-        public void Export(string Format)
+        public void Export(ExportFormat SelectedFormat)
         {
             IEnumerable<DataRecord> data = GetQuotesRepository().GetData();
 
 
             var export = new Export();
-            // TODO: Remove cast enum ExportFormat
-            ExportFormat format;
-            if (!Enum.TryParse(Format, out format)) RedirectToAction("Error");
 
-
-            byte[] byteArray = export.GetExportData(data, format);
+            byte[] byteArray = export.GetExportData(data, SelectedFormat);
 
             Response.Clear();
-            Response.AppendHeader("Content-Disposition", "filename=export." + Format.ToLower());
+            Response.AppendHeader("Content-Disposition", "filename=export." + SelectedFormat.ToString());
             Response.AppendHeader("Content-Length", byteArray.Length.ToString());
             Response.ContentType = "application/octet-stream";
             Response.BinaryWrite(byteArray);
@@ -173,6 +173,20 @@ namespace Epam_MVC4.Controllers
         {
             ViewBag.ErrorMsg = "There was an error";
             return View("_Error");
+        }
+
+        //[HttpPost]
+        //public ActionResult Temp(HomeViewModel model)
+        //{
+
+        //    return View("Index");
+        //}
+
+        [HttpPost]
+        public ActionResult Temp(DataProvider provider)
+        {
+
+            return View("Index");
         }
 
         //private DataProvider GetDataProvider(string Name)

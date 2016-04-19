@@ -44,6 +44,17 @@
 }
 
 <div id="data-table" class="container">
-    @Html.Partial("_Table", Model.Table)
+    @*@Html.Partial("_Table", Model.Table)*@
 </div>
 
+@*@Html.BeginForm("Temp", "Home", FormMethod.Post)
+{ 
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProviderId, "ProviderId", new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("ProviderId", String.Empty)
+            @Html.ValidationMessageFor(model => model.ProviderId)
+        </div>
+    </div>
+    <input type="submit" name="DropDown" value="DropDown" />
+}*@
