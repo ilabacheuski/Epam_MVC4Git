@@ -11,6 +11,7 @@ namespace Epam_MVC4.Models
         public virtual IEnumerable<ExportFormat> Formats { get; set; }
         public virtual IEnumerable<DataRecord> Data { get; set; }
         public virtual ExportFormat SelectedFormat { get; set; }
+        public virtual string DisplayCSS { get; set; }
 
         public _TableViewModel()
         {

@@ -21,48 +21,25 @@ namespace Epam_MVC4.Models
 
         public int page;
 
-        [Display(Name = "Per page:")]
-        public PerPage PerPage { get; set; }
-
         public IEnumerable<DataProvider> DataProviders { get; }
 
         public virtual DataProvider SelectedProvider { get; set; }
-
-        //public IEnumerable<SelectListItem> SelectListProviders { get; set; }
-
-        //public SelectList SelectListProvider { get; set; }
-
+        
         public string ProviderName { get; set; }
-
-        //public int SelectedProviderId { get; set; }
-        //public DataProvider SelectedProvider { get; set; }
 
         public IEnumerable<DataRecord> Table { get; set; }
 
         public string Query;
 
         public virtual int ProviderId { get; set; }
-        //public virtual SelectList ProviderList { get; set; }
-
-        //public IEnumerable<string> ExportFormatList { get; set; }
 
         public HomeViewModel()
         {
             DataProviders = new DataProviders().GetProviders();
-            //SelectedProvider = DataProviders.FirstOrDefault();
-            //ProviderName = DataProviders.FirstOrDefault().Name.ToString();
             StartDate = DateTime.Today.AddMonths(-12);
             EndDate = DateTime.Today;
-            PerPage = PerPage._20;
             page = 1;
 
-            //ProviderList = new SelectList(DataProviders, "Id", "Name");
-
-            //ExportFormatList = new Export().GetFormats();
-
-            //SelectListProvider = new SelectList(new DataProviders().GetProviders(), "Id", "Name");
-
-            //SelectListProviders = from item in new DataProviders().GetProviders() select new SelectListItem { Text = item.Name, Value = item.Id.ToString()};
         }
     }
 

@@ -43,34 +43,10 @@ namespace Epam_MVC4.Models
             return Data;
         }
 
-        public IEnumerable<DataRecord> GetOnePageOfData(int page = 1, PerPage perPage = PerPage._20)
-        {
-
-            var onePage = Data.ToPagedList(page, (int)perPage);
-
-            return onePage.ToList();
-        }
 
         public void AddToRepository(IEnumerable<DataRecord> data)
         {
             Data = data;
         }
-
-        public IPagedList GetPagedList(int page, PerPage perPage)
-        {
-            return Data.ToPagedList(page, (int)perPage);
-        }
-    }
-
-    public enum PerPage
-    {
-        [Display(Name = "20")]
-        _20 = 20,
-        [Display(Name = "50")]
-        _50 = 50,
-        [Display(Name = "100")]
-        _100 = 100,
-        [Display(Name = "all")]
-        _all = 1000
     }
 }

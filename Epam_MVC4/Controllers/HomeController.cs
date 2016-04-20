@@ -20,9 +20,9 @@ namespace Epam_MVC4.Controllers
 
     // TODO: 1. Лучше не использовать глобальные переменные TempData, ViewBag, Session. Во первых, потому что они затрудняют юнит-тестирование. Во-вторых: TempData - данные передаются с сервера на клиент и обратно, ненужного трафика лучше избегать; ViewBag - у нас MVC фреймворк, данные с контроллера на view должны передаваться только через модель; Session - данные храняться в памяти сервера, придет миллион пользователей и память закончиться, если сервер перегрузиться, то все данные о сессиях теряются.
 
-    // TODO: 2. StringReader, StringWriter, HttpWebRequest, HttpWebResponse, Stream являются IDisposable, их надо закрывать после использования, лучше для этого использовать using.
+    // DONE: 2. StringReader, StringWriter, HttpWebRequest, HttpWebResponse, Stream являются IDisposable, их надо закрывать после использования, лучше для этого использовать using.
 
-    // TODO: 3. Приведение типов является плохой практикой, этого надо избегать.
+    // DONE?: 3. Приведение типов является плохой практикой, этого надо избегать.
 
     // DONE: 4. ExportsController - непонятно зачем он наследуется от Controller.И сама логика типов экспорта размазана по всему приложению. Если надо будет добавить новый формат, то придется исправлять не в одном месте.А по идее должно быть просто - добавили новый класс-формат и все заработало из коробки.
 
@@ -34,7 +34,7 @@ namespace Epam_MVC4.Controllers
 
     // DONE: 8. С DataProvider та же проблема, что и с экспортом. При добавлении нового DataProvider надо модифицировать код в очень многих местах.А должно быть просто - создал новый наследник DataProvider - и все везде сразу заработало правильно.
 
-    // TODO: 9. _Table.cshtml - там логика во view (@if (Model.Count() != 0)...). View должно только распечатывать модель, никаких условий и логики там быть не должно.Вся логика должны быть только в контроллере, потому что его можно легко протестировать по тому, что он передает в модели.А view тестировать сложно.
+    // DONE: 9. _Table.cshtml - там логика во view (@if (Model.Count() != 0)...). View должно только распечатывать модель, никаких условий и логики там быть не должно.Вся логика должны быть только в контроллере, потому что его можно легко протестировать по тому, что он передает в модели.А view тестировать сложно.
 
     // TODO: 10. Конечно, передавать html через ajax сейчас не модно.Лучше использовать json.Тогда сразу появится сервис, с которым интересно поработать :)
 
@@ -56,14 +56,9 @@ namespace Epam_MVC4.Controllers
 
             if (page != 1) hvm.page = page;
 
-            var t_perPage = TempData["PerPage"];
-            var perPage = t_perPage == null ? PerPage._20 : (PerPage)t_perPage;
-            hvm.PerPage = perPage;
 
             var repository = GetQuotesRepository();
-            hvm.Table = repository.GetOnePageOfData(page, perPage);
-
-            ViewBag.PagedList = repository.GetPagedList(page, perPage);
+            hvm.Table = repository.GetData();
 
             if (Request.IsAjaxRequest())
             {
@@ -92,7 +87,7 @@ namespace Epam_MVC4.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetQuotes(string Query, string ProviderName, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20)
+        public ActionResult GetQuotes(string Query, string ProviderName, DateTime StartDate, DateTime EndDate)
         {
 
             if (String.IsNullOrWhiteSpace(Query))
@@ -117,7 +112,6 @@ namespace Epam_MVC4.Controllers
             var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
             hvm.StartDate = StartDate;
             hvm.EndDate = EndDate;
-            hvm.PerPage = PerPage;
             hvm.page = 1;
 
             if (Request.IsAjaxRequest())
@@ -136,6 +130,7 @@ namespace Epam_MVC4.Controllers
 
                 _TableViewModel tModel = new _TableViewModel();
                 tModel.Data = data;
+                if (data.Count() == 0) tModel.DisplayCSS = "display=\"none\"";
 
                 return PartialView("_Table", tModel);
             }

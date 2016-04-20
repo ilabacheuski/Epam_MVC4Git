@@ -5,8 +5,8 @@
 @using Epam_MVC4.Controllers
 @model _TableViewModel
 
-<div class="grid">
-    <table class="table table-striped table-hover">
+<div class="container">
+    <table id="quotesTable" class="table table-striped table-hover" @Model.DisplayCSS>
         <thead>
             <tr>
                 <th>
@@ -55,10 +55,9 @@
             }
         </tbody>
     </table>
-    @*@Html.PagedListPager((IPagedList)ViewBag.PagedList, page => Url.Action("Index", new { page }), 
-                        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "data-table" }))*@
 </div>
-<div class="export">
+
+<div class="export container">
     <div class="btn-group">
         @foreach (ExportFormat item in Model.Formats)
         {
@@ -69,3 +68,4 @@
         }
     </div>
 </div>
+
