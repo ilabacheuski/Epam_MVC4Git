@@ -110,8 +110,8 @@ namespace Epam_MVC4.Controllers
             if (!ModelState.IsValid)
             {
                 hvm.Table = new List<DataRecord>();
-                ViewBag.ErrorMsg = "There was error in your request";
-                return PartialView("_Error");
+                ErrorViewModel err = new ErrorViewModel("There was error in your request");
+                return PartialView("_Error", err);
             }
 
             var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
