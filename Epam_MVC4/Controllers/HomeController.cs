@@ -24,7 +24,7 @@ namespace Epam_MVC4.Controllers
 
     // TODO: 3. Приведение типов является плохой практикой, этого надо избегать.
 
-    // TODO: 4. ExportsController - непонятно зачем он наследуется от Controller.И сама логика типов экспорта размазана по всему приложению. Если надо будет добавить новый формат, то придется исправлять не в одном месте.А по идее должно быть просто - добавили новый класс-формат и все заработало из коробки.
+    // DONE: 4. ExportsController - непонятно зачем он наследуется от Controller.И сама логика типов экспорта размазана по всему приложению. Если надо будет добавить новый формат, то придется исправлять не в одном месте.А по идее должно быть просто - добавили новый класс-формат и все заработало из коробки.
 
     // DONE: 5. Использование CsvHelper только добавляет код, без него можно на чистом C# распарсить в несколько строчек, а с этой библиотекой код превращается в ненужную кашу c маппингами, конфигурациями и конвертерами.
 
@@ -40,6 +40,8 @@ namespace Epam_MVC4.Controllers
 
     // DONE: 11. Весь проект закоммичен за 3 коммита.Насколько я понимаю, то культуры работы с git все еще нет, когда код коммититься законченными небольшими кусками.
 
+    // TODO: 12. Do something with temporary data.
+
     public class HomeController : Controller
     {
         private HomeViewModel hvm = new HomeViewModel();
@@ -47,11 +49,9 @@ namespace Epam_MVC4.Controllers
         [HttpGet]
         public ActionResult Index(int page = 1)
         {
-            string error = (string)TempData["Error"];
-            if (error != null)
+            if(!ModelState.IsValid)
             {
-                ViewBag.Error = (string)TempData["Error"];
-                return PartialView("_Error");
+                RedirectToAction("Error");
             }
 
             if (page != 1) hvm.page = page;
@@ -65,16 +65,12 @@ namespace Epam_MVC4.Controllers
 
             ViewBag.PagedList = repository.GetPagedList(page, perPage);
 
-            ViewBag.Exports = new ExportsController().GetExports();
-
             if (Request.IsAjaxRequest())
             {
                 _TableViewModel tModel = new _TableViewModel();
                 tModel.Data = new List<DataRecord>();
                 return PartialView("_Table", tModel);                
             }
-
-            ViewBag.ProviderId = new SelectList(hvm.DataProviders, "Id", "Name");
 
             return View("Index", hvm);
         }
@@ -96,16 +92,8 @@ namespace Epam_MVC4.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetQuotes(string Query, 
-            //[Bind(Include ="Id")]
-            string ProviderName, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20)
+        public ActionResult GetQuotes(string Query, string ProviderName, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20)
         {
-            //string Query, string ProviderName, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20
-            //string Query = hvm.Query;
-            //int ProviderName = hvm.SelectedProviderId;
-            //DateTime StartDate = hvm.StartDate;
-            //DateTime EndDate = hvm.EndDate;
-            //PerPage PerPage = PerPage._20;
 
             if (String.IsNullOrWhiteSpace(Query))
             {
@@ -131,7 +119,6 @@ namespace Epam_MVC4.Controllers
             hvm.EndDate = EndDate;
             hvm.PerPage = PerPage;
             hvm.page = 1;
-            //hvm.ProviderName = provider;
 
             if (Request.IsAjaxRequest())
             {
@@ -139,23 +126,29 @@ namespace Epam_MVC4.Controllers
 
                 if (data == null)
                 {
-                    TempData["Error"] = "There was an error getting quotes!";
-                    return RedirectToAction("Index");
+                    ErrorViewModel err = new ErrorViewModel("There are no quotes in result!");
+                    return View("_Error", err);
                 }
 
                 repository.AddToRepository(data);
 
                 Session["QuotesRepository"] = repository;
 
-                TempData["PerPage"] = PerPage;
+                _TableViewModel tModel = new _TableViewModel();
+                tModel.Data = data;
 
-                return RedirectToAction("Index");
-
+                return PartialView("_Table", tModel);
             }
 
             hvm.Table = repository.GetData();
             return View("Index", hvm);
             
+        }
+
+        public ActionResult Error()
+        {
+            ErrorViewModel err = new ErrorViewModel("There was an error");
+            return View("_Error", err);
         }
 
         private QuotesRepository GetQuotesRepository()
@@ -169,62 +162,7 @@ namespace Epam_MVC4.Controllers
             return repository;
         }
 
-        public ActionResult Error()
-        {
-            ViewBag.ErrorMsg = "There was an error";
-            return View("_Error");
-        }
 
-        //[HttpPost]
-        //public ActionResult Temp(HomeViewModel model)
-        //{
-
-        //    return View("Index");
-        //}
-
-        [HttpPost]
-        public ActionResult Temp(DataProvider provider)
-        {
-
-            return View("Index");
-        }
-
-        //private DataProvider GetDataProvider(string Name)
-        //{
-        //    return hvm.DataProviders.First(x => x.Name == Name);
-        //}
-
-        //private string GetCSV(string url)
-        //{
-        //    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-        //    HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-
-        //    StreamReader sr = new StreamReader(resp.GetResponseStream());
-        //    string results = sr.ReadToEnd();
-        //    sr.Close();
-
-        //    return results;
-        //}
-
-        //private IEnumerable<DataRecord> GetData(string Quote, string ProviderName, DateTime StartDate, DateTime EndDate)
-        //{
-        //    DataProvider provider = GetDataProvider(ProviderName);
-        //    string doc;
-        //    try
-        //    {
-        //        doc = GetCSV(provider.GetUrl() + provider.GetPost(Quote, StartDate, EndDate));
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return null;
-        //    }
-
-        //    if (String.IsNullOrEmpty(doc)) return null;
-
-        //    IEnumerable<DataRecord> result = provider.GetDataFromCSV(doc);
-
-        //    return result;
-        //}
 
     }
 }

@@ -228,6 +228,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\DataProvider.cs" />
+    <Compile Include="Models\ErrorViewModel.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Models\_DataRecordModel.cs" />

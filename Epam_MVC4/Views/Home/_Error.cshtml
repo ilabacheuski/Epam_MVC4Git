@@ -1,3 +1,5 @@
-﻿
-<h2>@ViewBag.ErrorMsg</h2>
+﻿@using Epam_MVC4.Models
+@model ErrorViewModel
+
+<h2>@Model.Msg</h2>
 @Html.ValidationSummary()

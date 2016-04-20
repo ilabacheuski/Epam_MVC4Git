@@ -26,6 +26,8 @@ namespace Epam_MVC4.Models
 
         public IEnumerable<DataProvider> DataProviders { get; }
 
+        public virtual DataProvider SelectedProvider { get; set; }
+
         //public IEnumerable<SelectListItem> SelectListProviders { get; set; }
 
         //public SelectList SelectListProvider { get; set; }
