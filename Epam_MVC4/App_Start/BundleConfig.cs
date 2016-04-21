@@ -22,6 +22,12 @@ namespace Epam_MVC4
                         "~/Scripts/jquery.dataTables.js",
                         "~/Scripts/dataTables.bootstrap.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/mustache").Include(
+                        "~/Scripts/mustache.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/main").Include(
+                        "~/Scripts/main.js"));
+
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(

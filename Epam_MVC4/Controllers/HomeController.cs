@@ -9,11 +9,10 @@ using System.Net;
 using System.IO;
 using System.Xml.Linq;
 using CsvHelper;
-using PagedList;
-using PagedList.Mvc;
 using Epam_MVC4.Controllers;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace Epam_MVC4.Controllers
 {
@@ -87,57 +86,15 @@ namespace Epam_MVC4.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetQuotes(string Query, string ProviderName, DateTime StartDate, DateTime EndDate)
+        public ContentResult GetQuotes(string Query, string ProviderName, DateTime StartDate, DateTime EndDate)
         {
-
-            if (String.IsNullOrWhiteSpace(Query))
-            {
-                ModelState.AddModelError("Query", "Please input a querry!");
-            }
-
-            if (StartDate > EndDate)
-            {
-                ModelState.AddModelError("StartDate", "Start date must be less than end date.");
-            }
-
-            var repository = GetQuotesRepository();
-
-            if (!ModelState.IsValid)
-            {
-                hvm.Table = new List<DataRecord>();
-                ErrorViewModel err = new ErrorViewModel("There was error in your request");
-                return PartialView("_Error", err);
-            }
-
             var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
-            hvm.StartDate = StartDate;
-            hvm.EndDate = EndDate;
-            hvm.page = 1;
-
-            if (Request.IsAjaxRequest())
-            {
-                IEnumerable<DataRecord> data = provider.GetData(Query, StartDate, EndDate);
-
-                if (data == null)
-                {
-                    ErrorViewModel err = new ErrorViewModel("There are no quotes in result!");
-                    return View("_Error", err);
-                }
-
-                repository.AddToRepository(data);
-
-                Session["QuotesRepository"] = repository;
-
-                _TableViewModel tModel = new _TableViewModel();
-                tModel.Data = data;
-                if (data.Count() == 0) tModel.DisplayCSS = "display=\"none\"";
-
-                return PartialView("_Table", tModel);
-            }
-
-            hvm.Table = repository.GetData();
-            return View("Index", hvm);
-            
+        
+            _TableViewModel tModel = new _TableViewModel();
+            tModel.Data = provider.GetData(Query, StartDate, EndDate);
+            tModel.ShowTable = (tModel.Data.Count() != 0);
+            var json = JsonConvert.SerializeObject(tModel, Formatting.Indented, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd" });
+            return new ContentResult { Content = json, ContentType = "application/json" };
         }
 
         public ActionResult Error()
