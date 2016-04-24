@@ -17,7 +17,7 @@ using Newtonsoft.Json.Converters;
 namespace Epam_MVC4.Controllers
 {
 
-    // TODO: 1. Лучше не использовать глобальные переменные TempData, ViewBag, Session. Во первых, потому что они затрудняют юнит-тестирование. Во-вторых: TempData - данные передаются с сервера на клиент и обратно, ненужного трафика лучше избегать; ViewBag - у нас MVC фреймворк, данные с контроллера на view должны передаваться только через модель; Session - данные храняться в памяти сервера, придет миллион пользователей и память закончиться, если сервер перегрузиться, то все данные о сессиях теряются.
+    // DONE?: 1. Лучше не использовать глобальные переменные TempData, ViewBag, Session. Во первых, потому что они затрудняют юнит-тестирование. Во-вторых: TempData - данные передаются с сервера на клиент и обратно, ненужного трафика лучше избегать; ViewBag - у нас MVC фреймворк, данные с контроллера на view должны передаваться только через модель; Session - данные храняться в памяти сервера, придет миллион пользователей и память закончиться, если сервер перегрузиться, то все данные о сессиях теряются.
 
     // DONE: 2. StringReader, StringWriter, HttpWebRequest, HttpWebResponse, Stream являются IDisposable, их надо закрывать после использования, лучше для этого использовать using.
 
@@ -35,7 +35,7 @@ namespace Epam_MVC4.Controllers
 
     // DONE: 9. _Table.cshtml - там логика во view (@if (Model.Count() != 0)...). View должно только распечатывать модель, никаких условий и логики там быть не должно.Вся логика должны быть только в контроллере, потому что его можно легко протестировать по тому, что он передает в модели.А view тестировать сложно.
 
-    // TODO: 10. Конечно, передавать html через ajax сейчас не модно.Лучше использовать json.Тогда сразу появится сервис, с которым интересно поработать :)
+    // DONE: 10. Конечно, передавать html через ajax сейчас не модно.Лучше использовать json.Тогда сразу появится сервис, с которым интересно поработать :)
 
     // DONE: 11. Весь проект закоммичен за 3 коммита.Насколько я понимаю, то культуры работы с git все еще нет, когда код коммититься законченными небольшими кусками.
 
@@ -46,18 +46,12 @@ namespace Epam_MVC4.Controllers
         private HomeViewModel hvm = new HomeViewModel();
 
         [HttpGet]
-        public ActionResult Index(int page = 1)
+        public ActionResult Index()
         {
             if(!ModelState.IsValid)
             {
                 RedirectToAction("Error");
             }
-
-            if (page != 1) hvm.page = page;
-
-
-            var repository = GetQuotesRepository();
-            hvm.Table = repository.GetData();
 
             if (Request.IsAjaxRequest())
             {
@@ -93,6 +87,9 @@ namespace Epam_MVC4.Controllers
             _TableViewModel tModel = new _TableViewModel();
             tModel.Data = provider.GetData(Query, StartDate, EndDate);
             tModel.ShowTable = (tModel.Data.Count() != 0);
+
+
+
             var json = JsonConvert.SerializeObject(tModel, Formatting.Indented, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd" });
             return new ContentResult { Content = json, ContentType = "application/json" };
         }

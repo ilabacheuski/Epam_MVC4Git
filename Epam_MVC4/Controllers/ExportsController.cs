@@ -12,22 +12,22 @@ using Newtonsoft.Json;
 
 namespace Epam_MVC4.Controllers
 {
-    public class ExportsController
-    {
-        private List<string> Exports = new List<string>();
+    //public class ExportsController
+    //{
+    //    private List<string> Exports = new List<string>();
 
-        public ExportsController()
-        {
-            Exports.Add("CSV");
-            Exports.Add("JSON");
-            Exports.Add("XML");
-        }
+    //    public ExportsController()
+    //    {
+    //        Exports.Add("CSV");
+    //        Exports.Add("JSON");
+    //        Exports.Add("XML");
+    //    }
 
-        public List<string> GetExports()
-        {
-            return Exports;
-        }
-    }
+    //    public List<string> GetExports()
+    //    {
+    //        return Exports;
+    //    }
+    //}
 
     public enum ExportFormat
     {
