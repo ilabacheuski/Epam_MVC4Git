@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 using CsvHelper;
 using Newtonsoft.Json;
 
-namespace Epam_MVC4.Controllers
+namespace Epam_MVC4.Components
 {
     //public class ExportsController
     //{

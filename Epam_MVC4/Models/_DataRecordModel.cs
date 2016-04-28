@@ -31,20 +31,4 @@ namespace Epam_MVC4.Models
         public uint Volume { get; set; }
         
     }
-
-    public class QuotesRepository
-    {
-        private IEnumerable<DataRecord> Data = new List<DataRecord>();
-
-        public IEnumerable<DataRecord> GetData()
-        {
-            return Data;
-        }
-
-
-        public void AddToRepository(IEnumerable<DataRecord> data)
-        {
-            Data = data;
-        }
-    }
 }

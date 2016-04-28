@@ -9,7 +9,7 @@ using System.Net;
 using System.IO;
 using System.Xml.Linq;
 using CsvHelper;
-using Epam_MVC4.Controllers;
+using Epam_MVC4.Components;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
 using Newtonsoft.Json.Converters;
@@ -27,7 +27,7 @@ namespace Epam_MVC4.Controllers
 
     // DONE: 5. Использование CsvHelper только добавляет код, без него можно на чистом C# распарсить в несколько строчек, а с этой библиотекой код превращается в ненужную кашу c маппингами, конфигурациями и конвертерами.
 
-    // TODO: 6. HomeCоntroller.GetQuotes(string Query, string Provider, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20) - вместо string Provider можно сделать так, чтобы сразу передавался DataProvider Provider(не обязательно, но желательно)
+    // DONE?: 6. HomeCоntroller.GetQuotes(string Query, string Provider, DateTime StartDate, DateTime EndDate, PerPage PerPage = PerPage._20) - вместо string Provider можно сделать так, чтобы сразу передавался DataProvider Provider(не обязательно, но желательно)
 
     // DONE: 7. Сам DataProvider спроектирован с непонятной идеей, половину работы за него приходиться делать контроллеру.Я бы сделал там только один метод типа IEnumerable<DataRecord> GetData(), который мне сразу возвращает то что надо.В этом случае такой провайдер можно будет без проблем переиспользовать, а в текущем виде он никому не нужен, потому что к нему надо еще кучу кода дописывать.Причем лежит DataProvider в папке Models, хотя никакого отношения к моделям не имеет.
 
@@ -39,34 +39,34 @@ namespace Epam_MVC4.Controllers
 
     // DONE: 11. Весь проект закоммичен за 3 коммита.Насколько я понимаю, то культуры работы с git все еще нет, когда код коммититься законченными небольшими кусками.
 
-    // TODO: 12. Do something with temporary data.
+    // TODO: 12. All the time buzz data provider to get data.
+
+    // TODO: 13. Polymorphism in Export Controllers
+
+    // TODO: GET everywhere
+
+    // TODO: Exports
 
     public class HomeController : Controller
     {
         private HomeViewModel hvm = new HomeViewModel();
 
-        [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(HomeViewModel model)
         {
             if(!ModelState.IsValid)
             {
                 RedirectToAction("Error");
             }
 
-            if (Request.IsAjaxRequest())
-            {
-                _TableViewModel tModel = new _TableViewModel();
-                tModel.Data = new List<DataRecord>();
-                return PartialView("_Table", tModel);                
-            }
-
             return View("Index", hvm);
         }
 
-        public void Export(ExportFormat SelectedFormat)
+        [HttpGet]
+        public void Export(string Query, string ProviderName, DateTime StartDate, DateTime EndDate, ExportFormat SelectedFormat)
         {
-            IEnumerable<DataRecord> data = GetQuotesRepository().GetData();
+            var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
 
+            var data = provider.GetData(Query, StartDate, EndDate);
 
             var export = new Export();
 
@@ -79,7 +79,7 @@ namespace Epam_MVC4.Controllers
             Response.BinaryWrite(byteArray);
         }
 
-        [HttpPost]
+        [HttpGet]
         public ContentResult GetQuotes(string Query, string ProviderName, DateTime StartDate, DateTime EndDate)
         {
             var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
@@ -99,19 +99,5 @@ namespace Epam_MVC4.Controllers
             ErrorViewModel err = new ErrorViewModel("There was an error");
             return View("_Error", err);
         }
-
-        private QuotesRepository GetQuotesRepository()
-        {
-            var repository = (QuotesRepository)Session["QuotesRepository"];
-            if (repository == null)
-            {
-                repository = new QuotesRepository();
-                Session["QuotesRepository"] = repository;
-            }
-            return repository;
-        }
-
-
-
     }
 }

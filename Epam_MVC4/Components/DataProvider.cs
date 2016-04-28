@@ -9,8 +9,9 @@ using CsvHelper.Configuration;
 using System.IO;
 using CsvHelper.TypeConversion;
 using System.Net;
+using Epam_MVC4.Models;
 
-namespace Epam_MVC4.Models
+namespace Epam_MVC4.Components
 {
     public enum DataFormat
     {

@@ -5,7 +5,7 @@ using System.Web;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using Epam_MVC4.Controllers;
+using Epam_MVC4.Components;
 
 namespace Epam_MVC4.Models
 {

@@ -4,7 +4,7 @@
 
     $.ajax({
         url: form.attr("action"),
-        method: "POST",
+        method: "GET",
         data: form.serialize(),
         beforeSend: function () {
             $("#ajax-loader").show();
