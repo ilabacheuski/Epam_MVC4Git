@@ -58,19 +58,32 @@ namespace Epam_MVC4.Controllers
                 RedirectToAction("Error");
             }
 
-            return View("Index", hvm);
+            if (model.StartDate == default(DateTime)) model.StartDate = DateTime.Today.AddMonths(-12);
+            if (model.EndDate == default(DateTime)) model.EndDate = DateTime.Today;
+
+            return View("Index", model);
         }
 
         [HttpGet]
-        public void Export(string Query, string ProviderName, DateTime StartDate, DateTime EndDate, ExportFormat SelectedFormat)
+        public ActionResult Test(HomeViewModel model)
+        {
+            if(model.StartDate == default(DateTime)) model.StartDate = DateTime.Today.AddMonths(-12);
+            if(model.EndDate == default(DateTime)) model.EndDate = DateTime.Today;
+            return View("Index", model);
+        }
+
+        [HttpGet]
+        public void Export(string Query, string ProviderName, DateTime StartDate, DateTime EndDate, string SelectedFormat)
         {
             var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
 
             var data = provider.GetData(Query, StartDate, EndDate);
 
-            var export = new Export();
+            var ExportsFactory = new Exports();
 
-            byte[] byteArray = export.GetExportData(data, SelectedFormat);
+            var export = ExportsFactory.GetExportByName(SelectedFormat);
+
+            byte[] byteArray = export.GetExportData(data);
 
             Response.Clear();
             Response.AppendHeader("Content-Disposition", "filename=export." + SelectedFormat.ToString());
@@ -88,7 +101,9 @@ namespace Epam_MVC4.Controllers
             tModel.Data = provider.GetData(Query, StartDate, EndDate);
             tModel.ShowTable = (tModel.Data.Count() != 0);
 
+            var Exports = new Exports();
 
+            tModel.Exports = Exports.GetExportFormats();
 
             var json = JsonConvert.SerializeObject(tModel, Formatting.Indented, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd" });
             return new ContentResult { Content = json, ContentType = "application/json" };

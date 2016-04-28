@@ -1,6 +1,19 @@
 ﻿@model Epam_MVC4.Models.HomeViewModel
 
-<form id="get-quotes" method="post" action="@Url.Action("GetQuotes", "Home")" mst-templates="@Url.Content("~/Content/Templates/home.mst")">
+<form id="test" method="get" action="@Url.Action("Test", "Home", Model)">
+    @Html.LabelFor(x => Model.StartDate, new { htmlAttributes = new { @class = "label" } })
+    @Html.EditorFor(x => Model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.LabelFor(x => Model.EndDate, new { htmlAttributes = new { @class = "label" } })
+    @Html.EditorFor(x => Model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.LabelFor(x => Model.Query, new { htmlAttributes = new { @class = "label" } })
+    @Html.EditorFor(x => Model.Query, new { htmlAttributes = new { @class = "form-control" } })
+    <label for="ProviderName">Get from:</label><br />
+    @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
+                    new { @class = "form-control" })
+    <input type="submit" name="TestBtn" value="Test" />
+</form>
+
+<form id="get-quotes" method="get" action="@Url.Action("GetQuotes", "Home")">
     <div class="form-group form-inline form-group-sm">
         <div class="col-xs-4">
             <label for="ProviderName">Get from:</label><br />
@@ -74,5 +87,13 @@
             {{/Data}}
         </tbody>
     </table>
+
+    <form id="export-form" method="get" action ="@Url.Action("Export", "Home")">
+        <div class="btn-group" role="group" aria-label="...">
+            {{#Exports}}
+            <button type="button" class="btn btn-default export-btn" value="{{Id}}" name="SelectedFormat">Export to: {{Name}}</button>
+            {{/Exports}}
+        </div>
+    </form>
     {{/ShowTable}}
 </script>

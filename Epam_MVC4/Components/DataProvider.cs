@@ -36,11 +36,15 @@ namespace Epam_MVC4.Components
         {
             return Providers;
         }
+
+        public DataProvider GetProviderByName(string name)
+        {
+            return Providers.First(x => x.Name == name);
+        }
     }
 
     public class DataProvider
     {
-        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         protected string Url { get; set; }

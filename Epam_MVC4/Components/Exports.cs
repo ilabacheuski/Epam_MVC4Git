@@ -12,90 +12,122 @@ using Newtonsoft.Json;
 
 namespace Epam_MVC4.Components
 {
-    //public class ExportsController
-    //{
-    //    private List<string> Exports = new List<string>();
-
-    //    public ExportsController()
-    //    {
-    //        Exports.Add("CSV");
-    //        Exports.Add("JSON");
-    //        Exports.Add("XML");
-    //    }
-
-    //    public List<string> GetExports()
-    //    {
-    //        return Exports;
-    //    }
-    //}
-
-    public enum ExportFormat
+    public class Exports
     {
-        CSV,
-        JSON,
-        XML
+        private IEnumerable<Export> ExportsFormats;
+
+        public Exports()
+        {
+            var csv = new CsvExport();
+            var xml = new XmlExporter();
+            var json = new JsonExport();
+
+            ExportsFormats = new List<Export>() { csv, xml, json };
+        }
+
+        public IEnumerable<Export> GetExportFormats()
+        {
+            return ExportsFormats;
+        }
+
+        public Export GetExportByName(string Name)
+        {
+            return ExportsFormats.First(x => x.Name == Name);
+        }
     }
 
-    public class Export
+    public abstract class Export
     {
-        private IEnumerable<string> Formats;
+        public abstract string Id { get; }
+        public abstract string Name { get; }
 
-        public Export()
+        public abstract byte[] GetExportData(IEnumerable<DataRecord> data);
+    }
+
+    public class CsvExport : Export
+    {
+        public override string Id { get; }
+        public override string Name { get; }
+
+        public override byte[] GetExportData(IEnumerable<DataRecord> data)
         {
-            var f = new List<string>();
-            var values = Enum.GetNames(typeof(ExportFormat));
 
-            foreach(var format in values)
-            {
-                f.Add(format);
-            }
-            Formats = f;            
-        }
-
-        public IEnumerable<string> GetFormats()
-        {
-            return Formats;
-        }
-
-        public byte[] GetExportData(IEnumerable<DataRecord> data, ExportFormat format)
-        {
             byte[] result = new byte[] { };
 
             string content = "";
 
-            switch (format)
+            using (TextWriter textWriter = new StringWriter())
+            using (var csv = new CsvWriter(textWriter))
             {
-                case ExportFormat.CSV:
-                    using (TextWriter textWriter = new StringWriter())
-                    using (var csv = new CsvWriter(textWriter))
-                    {
-                        csv.Configuration.HasHeaderRecord = true;
-                        foreach (var item in data)
-                        {
-                            csv.WriteRecord(item);
-                        }
-                        content = textWriter.ToString();
-                    }
-                    break;
-                case ExportFormat.JSON:
-                    content = JsonConvert.SerializeObject(data);
-                    break;
-                case ExportFormat.XML:
-                    XmlSerializer Xml_Serializer = new XmlSerializer(data.GetType());
-                    using (StringWriter Writer = new StringWriter())
-                    {
-                        Xml_Serializer.Serialize(Writer, data);
-                        content = Writer.ToString();
-                    }                    
-                    break;
-                default:
-                    content = "";
-                    break;
+                csv.Configuration.HasHeaderRecord = true;
+                foreach (var item in data)
+                {
+                    csv.WriteRecord(item);
+                }
+                content = textWriter.ToString();
             }
 
             result = Encoding.ASCII.GetBytes(content);
 
             return result;
+        }
+        public CsvExport()
+        {
+            Id = "CSV";
+            Name = "CSV";
+        }
+    }
+
+    public class XmlExporter : Export
+    {
+        public override string Id { get; }
+        public override string Name { get; }
+
+        public override byte[] GetExportData(IEnumerable<DataRecord> data)
+        {
+
+            byte[] result = new byte[] { };
+
+            string content = "";
+
+            XmlSerializer Xml_Serializer = new XmlSerializer(data.GetType());
+            using (StringWriter Writer = new StringWriter())
+            {
+                Xml_Serializer.Serialize(Writer, data);
+                content = Writer.ToString();
+            }
+
+            result = Encoding.ASCII.GetBytes(content);
+
+            return result;
+        }
+        public XmlExporter()
+        {
+            Id = "XML";
+            Name = "XML";
+        }
+    }
+
+    public class JsonExport : Export
+    {
+        public override string Id { get; }
+        public override string Name { get; }
+
+        public override byte[] GetExportData(IEnumerable<DataRecord> data)
+        {
+
+            byte[] result = new byte[] { };
+
+            string content = JsonConvert.SerializeObject(data);
+
+            result = Encoding.ASCII.GetBytes(content);
+
+            return result;
+        }
+        public JsonExport()
+        {
+            Id = "JSON";
+            Name = "JSON";
         }
     }
 }
