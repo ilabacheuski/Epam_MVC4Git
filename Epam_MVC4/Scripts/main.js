@@ -1,68 +1,63 @@
 ﻿$(document).ready(function () {
-    $('#get-quotes').submit(function (event) {
+
+    //$.ajax({
+    //    url: $('#btn-search').attr("action") + window.location.search,
+    //    method: 'GET',
+    //    beforeSend: showAjaxLoader,
+    //    complete: hideAjaxLoader,
+    //    error: searchFailed,
+    //    success: parseTable
+        
+    //})
+
+    $('#form-quotes').submit(function (event) {
         event.preventDefault();
         var form = $(this);
-
+        var url = $('#btn-search').attr("action");
+        var data_ = form.serialize();
         $.ajax({
-            url: form.attr("action"),
-            method: 'GET',
-            data: form.serialize(),
-            beforeSend: function () {
-                $("#ajax-loader").show();
-            },
-            complete: function () {
-                $("#ajax-loader").hide();
-            },
-            error: searchFailed,
-            success: function (data) {
-                ParseJSON(data);
-                BindButtonClick();
-            }
-        });
-    })
-
-    function searchFailed() { alert("Failed to request! Try again.") }
-
-    function ParseJSON(data)
-    {
-        var html = Mustache.to_html($("#tableTemplate").html(),
-                data);
-        $("#data-table").empty().append(html);
-        $('#quotesTable').DataTable();
-    }
-
-    $('#test').submit(function (event) {
-        event.preventDefault();
-        var form = $(this);
-        $.ajax({
-            url: form.attr("action"),
-            data: form.serialize(),
-            beforeSend: function () {
-                $("#ajax-loader").show();
-            },
-            complete: function () {
-                $("#ajax-loader").hide();
-            },
+            url: url,
+            data: data_,
+            beforeSend: showAjaxLoader,
+            complete: hideAjaxLoader,
             error: searchFailed,
             success: function (response)
             {
-                location.href = "?" + form.serialize();
+                parseTable(response);
+                bindExportBtn();
+                
+                var provider = $('#ProviderName').val();
+                var stateObj = { indexPage: "Quotes_" + provider };
+                history.pushState(stateObj, "Quotes " + provider, "?" + data_);
             }
         })
     })
+
+
 })
 
-function BindButtonClick() {
-    $("button").click(function (e) {
-        var idClicked = e.target.value;
 
-        var form = $("#get-quotes");
-        var ActionUrl = $("#export-form").attr("action");
+function parseTable(response) {
+    var html = Mustache.to_html($("#mst-template-table").html(), response);
+    $("#table").empty().append(html);
+    $('#mst-table-data').DataTable();
+}
 
-        $.ajax({
-            url: ActionUrl,
-            method: 'GET',
-            data: form.serialize() + "&SelectedFormat=" + idClicked
-        })
+function searchFailed() { alert("Failed to request! Try again.") }
+
+function bindExportBtn() {
+    $('.export-btn').click(function (event) {
+        event.preventDefault();
+        var idClicked = event.target.value;
+        var form = $('#form-quotes');
+        var ActionUrl = $('.export-btn').attr("action");
+        window.location = ActionUrl + "?" + form.serialize() + "&SelectedFormat=" + idClicked;
     })
+}
+
+function showAjaxLoader() {
+    $("#ajax-wait").show();
+}
+function hideAjaxLoader() {
+    $("#ajax-wait").hide();
 }

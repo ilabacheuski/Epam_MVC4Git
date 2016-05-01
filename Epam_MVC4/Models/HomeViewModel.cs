@@ -14,15 +14,16 @@ namespace Epam_MVC4.Models
     {
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name ="StartDate")]
+        [Display(Name ="Date from:")]
         public DateTime StartDate { get; set; }
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "EndDate")]
+        [Display(Name = "to")]
         public DateTime EndDate { get; set; }
 
         public IEnumerable<DataProvider> DataProviders { get; }
         
+        [Display(Name ="Get from:")]
         public string ProviderName { get; set; }
 
         [Display(Name = "Query")]
@@ -31,8 +32,6 @@ namespace Epam_MVC4.Models
         public HomeViewModel()
         {
             DataProviders = new DataProviders().GetProviders();
-            //StartDate = DateTime.Today.AddMonths(-12);
-            //EndDate = DateTime.Today;
 
         }
     }

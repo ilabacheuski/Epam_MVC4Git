@@ -1,0 +1,165 @@
+﻿@model Epam_MVC4.Models.HomeViewModel
+
+<div id="hidden-action" action="@Url.Action("GetQuotes", "Home")" class="hidden"></div>
+<form id="form-quotes" method="get" action="@Url.Action("Index", "Home", Model)">
+    @Html.LabelFor(x => Model.StartDate, new { @class = "label" })
+    @Html.EditorFor(x => Model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.LabelFor(x => Model.EndDate, new { @class = "label" })
+    @Html.EditorFor(x => Model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.LabelFor(x => Model.Query, new { @class = "label" })
+    @Html.EditorFor(x => Model.Query, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.LabelFor(x => Model.ProviderName, new { @class = "label"})
+    @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
+                    new { @class = "form-control" })
+    <input id="btn-search" type="submit" name="button" action="@Url.Action("GetQuotes", "Home")" value="Search" /><br />
+
+    <img id="ajax-wait" src="~/Content/images/275.gif" style="display:none" />
+
+    <div id="table" class="container">
+        <script id="mst-template-table" type="text/html">
+            {{#ShowTable}}
+            <table id="mst-table-data" class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Open
+                        </th>
+                        <th>
+                            Low
+                        </th>
+                        <th>
+                            High
+                        </th>
+                        <th>
+                            Close
+                        </th>
+                        <th>
+                            Volume
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#Data}}
+                    <tr>
+                        <td align="left">
+                            {{TradeDate}}
+                        </td>
+                        <td align="left">
+                            {{Open}}
+                        </td>
+                        <td align="left">
+                            {{Low}}
+                        </td>
+                        <td align="left">
+                            {{High}}
+                        </td>
+                        <td align="left">
+                            {{Close}}
+                        </td>
+                        <td align="left">
+                            {{Volume}}
+                        </td>
+                    </tr>
+                    {{/Data}}
+                </tbody>
+            </table>
+
+            <form id="export-form" method="get" action="@Url.Action("Export", "Home")">
+                <div class="btn-group" role="group" aria-label="...">
+                    {{#Exports}}
+                    <button type="button" class="btn btn-default export-btn" value="{{Id}}" name="SelectedFormat">Export to: {{Name}}</button>
+                    {{/Exports}}
+                </div>
+            </form>
+            {{/ShowTable}}
+        </script>
+    </div>
+</form>
+
+@*<form id="get-quotes" method="get" action="@Url.Action("GetQuotes", "Home")">
+    <div class="form-group form-inline form-group-sm">
+        <div class="col-xs-4">
+            <label for="ProviderName">Get from:</label><br />
+            @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
+                    new { @class = "form-control" })
+        </div>
+        <div class="col-xs-8">
+            <label for="DateGroup">Date range: </label><br />
+            @Html.EditorFor(x => Model.StartDate, new { htmlAttributes = new { @class = "form-control" } }) <span><b>  -  </b></span>
+            @Html.EditorFor(x => Model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+    <div class="form-group form-inline form-group-lg">
+        <label for="Query">Query:</label>
+        @Html.EditorFor(m => Model.Query, new { htmlAttributes = new { placeholder = "Input query", @class = "form-control" } })
+        <input type="submit" name="search" value="Search" />
+    </div>
+    <img id="ajax-loader" src="~/Content/images/464.gif" style="display:none" />
+</form>
+
+<div id="data-table" class="container">
+</div>
+
+<script id="tableTemplate" type="text/html">
+    {{#ShowTable}}
+    <table id="quotesTable" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Open
+                </th>
+                <th>
+                    Low
+                </th>
+                <th>
+                    High
+                </th>
+                <th>
+                    Close
+                </th>
+                <th>
+                    Volume
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#Data}}
+            <tr>
+                <td align="left">
+                    {{TradeDate}}
+                </td>
+                <td align="left">
+                    {{Open}}
+                </td>
+                <td align="left">
+                    {{Low}}
+                </td>
+                <td align="left">
+                    {{High}}
+                </td>
+                <td align="left">
+                    {{Close}}
+                </td>
+                <td align="left">
+                    {{Volume}}
+                </td>
+            </tr>
+            {{/Data}}
+        </tbody>
+    </table>
+
+    <form id="export-form" method="get" action ="@Url.Action("Export", "Home")">
+        <div class="btn-group" role="group" aria-label="...">
+            {{#Exports}}
+            <button type="button" class="btn btn-default export-btn" value="{{Id}}" name="SelectedFormat">Export to: {{Name}}</button>
+            {{/Exports}}
+        </div>
+    </form>
+    {{/ShowTable}}
+</script>*@

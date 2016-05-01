@@ -13,6 +13,7 @@ using Epam_MVC4.Components;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
 using Newtonsoft.Json.Converters;
+using System.Web.Services;
 
 namespace Epam_MVC4.Controllers
 {
@@ -39,13 +40,13 @@ namespace Epam_MVC4.Controllers
 
     // DONE: 11. Весь проект закоммичен за 3 коммита.Насколько я понимаю, то культуры работы с git все еще нет, когда код коммититься законченными небольшими кусками.
 
-    // TODO: 12. All the time buzz data provider to get data.
+    // DONE: 12. All the time buzz data provider to get data.
 
-    // TODO: 13. Polymorphism in Export Controllers
+    // DONE: 13. Polymorphism in Export Controllers
 
-    // TODO: GET everywhere
+    // DONE: GET everywhere
 
-    // TODO: Exports
+    // DONE: Exports
 
     public class HomeController : Controller
     {
@@ -61,14 +62,6 @@ namespace Epam_MVC4.Controllers
             if (model.StartDate == default(DateTime)) model.StartDate = DateTime.Today.AddMonths(-12);
             if (model.EndDate == default(DateTime)) model.EndDate = DateTime.Today;
 
-            return View("Index", model);
-        }
-
-        [HttpGet]
-        public ActionResult Test(HomeViewModel model)
-        {
-            if(model.StartDate == default(DateTime)) model.StartDate = DateTime.Today.AddMonths(-12);
-            if(model.EndDate == default(DateTime)) model.EndDate = DateTime.Today;
             return View("Index", model);
         }
 
@@ -92,18 +85,24 @@ namespace Epam_MVC4.Controllers
             Response.BinaryWrite(byteArray);
         }
 
-        [HttpGet]
-        public ContentResult GetQuotes(string Query, string ProviderName, DateTime StartDate, DateTime EndDate)
+        [HttpGet]        
+        public ContentResult GetQuotes(HomeViewModel model)
         {
-            var provider = hvm.DataProviders.First(x => x.Name == ProviderName);
-        
             _TableViewModel tModel = new _TableViewModel();
-            tModel.Data = provider.GetData(Query, StartDate, EndDate);
-            tModel.ShowTable = (tModel.Data.Count() != 0);
 
-            var Exports = new Exports();
+            if (model.Query == null)
+            {
+                tModel.ShowTable = false;
+                tModel.Data = new List<DataRecord>();
+            }
+            else
+            {
+                var provider = model.DataProviders.First(x => x.Name == model.ProviderName);
+                tModel.Data = provider.GetData(model.Query, model.StartDate, model.EndDate);
+                tModel.ShowTable = (tModel.Data.Count() != 0);
+            }
+            
 
-            tModel.Exports = Exports.GetExportFormats();
 
             var json = JsonConvert.SerializeObject(tModel, Formatting.Indented, new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd" });
             return new ContentResult { Content = json, ContentType = "application/json" };

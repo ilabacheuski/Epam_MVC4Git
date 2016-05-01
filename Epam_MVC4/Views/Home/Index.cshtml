@@ -1,45 +1,40 @@
 ﻿@model Epam_MVC4.Models.HomeViewModel
 
-<form id="test" method="get" action="@Url.Action("Test", "Home", Model)">
-    @Html.LabelFor(x => Model.StartDate, new { htmlAttributes = new { @class = "label" } })
-    @Html.EditorFor(x => Model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
-    @Html.LabelFor(x => Model.EndDate, new { htmlAttributes = new { @class = "label" } })
-    @Html.EditorFor(x => Model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-    @Html.LabelFor(x => Model.Query, new { htmlAttributes = new { @class = "label" } })
-    @Html.EditorFor(x => Model.Query, new { htmlAttributes = new { @class = "form-control" } })
-    <label for="ProviderName">Get from:</label><br />
-    @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
-                    new { @class = "form-control" })
-    <input type="submit" name="TestBtn" value="Test" />
-</form>
-
-<form id="get-quotes" method="get" action="@Url.Action("GetQuotes", "Home")">
-    <div class="form-group form-inline form-group-sm">
-        <div class="col-xs-4">
-            <label for="ProviderName">Get from:</label><br />
-            @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
-                    new { @class = "form-control" })
+<form id="form-quotes" class="form-horizontal" method="get" action="@Url.Action("Index", "Home", Model)">
+    <div class="form-group">
+        @Html.LabelFor(x => Model.StartDate, new { @class = "col-sm-2 control-label" })
+        <div class="col-sm-2">
+            @Html.EditorFor(x => Model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
         </div>
-        <div class="col-xs-8">
-            <label for="DateGroup">Date range: </label><br />
-            @Html.EditorFor(x => Model.StartDate, new { htmlAttributes = new { @class = "form-control" } }) <span><b>  -  </b></span>
+        @Html.LabelFor(x => Model.EndDate, new { @class = "col-sm-1 text-center control-label" })
+        <div class="col-sm-2">
             @Html.EditorFor(x => Model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
         </div>
+        @Html.LabelFor(x => Model.ProviderName, new { @class = "col-sm-2 control-label" })
+        <div class="col-sm-3">
+            @Html.DropDownListFor(x => Model.ProviderName, new SelectList(Model.DataProviders.Select(x => x.Name).Distinct().ToList()),
+                                new { @class = "form-control" })
+        </div>
     </div>
-    <div class="form-group form-inline form-group-lg">
-        <label for="Query">Query:</label>
-        @Html.EditorFor(m => Model.Query, new { htmlAttributes = new { placeholder = "Input query", @class = "form-control" } })
-        <input type="submit" name="search" value="Search" />
+    <div class="form-group">
+        @Html.LabelFor(x => Model.Query, new { @class = "col-sm-2 control-label" })
+        <div class="col-sm-7">
+            @Html.EditorFor(x => Model.Query, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+        <div class="col-sm-3">
+            <input id="btn-search" class="btn btn-primary btn-block" type="submit" name="button" action="@Url.Action("GetQuotes", "Home")" value="Search" />
+        </div>
     </div>
-    <img id="ajax-loader" src="~/Content/images/464.gif" style="display:none" />
 </form>
+<img id="ajax-wait" src="~/Content/images/275.gif" style="display:none" />
 
-<div id="data-table" class="container">
+<div id="table" class="container">
+    <!--mst-tamplate-table-->
 </div>
 
-<script id="tableTemplate" type="text/html">
+<script id="mst-template-table" type="text/html">
     {{#ShowTable}}
-    <table id="quotesTable" class="table table-striped table-hover">
+    <table id="mst-table-data" class="table table-striped table-hover">
         <thead>
             <tr>
                 <th>
@@ -87,13 +82,10 @@
             {{/Data}}
         </tbody>
     </table>
-
-    <form id="export-form" method="get" action ="@Url.Action("Export", "Home")">
-        <div class="btn-group" role="group" aria-label="...">
-            {{#Exports}}
-            <button type="button" class="btn btn-default export-btn" value="{{Id}}" name="SelectedFormat">Export to: {{Name}}</button>
-            {{/Exports}}
-        </div>
-    </form>
+    <div class="btn-group" role="group" aria-label="...">
+        {{#Exports}}
+        <button type="button" class="btn btn-default export-btn" value="{{Id}}" name="SelectedFormat" action="@Url.Action("Export", "Home")">Export to: {{Name}}</button>
+        {{/Exports}}
+    </div>
     {{/ShowTable}}
 </script>
